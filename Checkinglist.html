@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solution Logística - Checking List para Inventário</title>
+       
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-section no-print">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <img src="https://media.licdn.com/dms/image/v2/C561BAQElTNz475IU1w/company-background_10000/company-background_10000/0/1649088753688/solution_log_oficial_cover?e=2147483647&v=beta&t=tfeZKGTyhvV84qZ6yBF38zpvAHJxRsaTtbd6WucytTU" 
+                         alt="Logo da Empresa" class="company-logo">
+                </div>
+                <div class="col-md-9">
+                    
+                </div>
+            </div>
+        </div>
+    </header>
+
+        <!-- Instructions Card -->
+        <div class="card instructions-card mb-4 no-print">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Instruções
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">Por favor, revise cada item da lista abaixo e marque as opções correspondentes às tarefas que foram concluídas. Utilize o campo de observações para adicionar qualquer comentário relevante sobre o processo de inventário.</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row mb-4 no-print">
+            <div class="col-12 d-flex gap-2 justify-content-end">
+                <button type="button" class="btn btn-info" onclick="printForm()">
+                    <i class="fas fa-print me-1"></i>Imprimir / Salvar
+                </button>
+                
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <form id="inventoryForm" method="POST" action="/submit" class="needs-validation" novalidate>
+            
+            <!-- Client Information -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-user me-2"></i>Informações do Cliente
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cliente" class="form-label required">Nome do Cliente</label>
+                                <input type="text" class="form-control" id="cliente" name="cliente" 
+                                       placeholder="">
+                                <div class="invalid-feedback">
+                                    Por favor, informe o nome do cliente.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="data_inventario" class="form-label required">Data do Inventário</label>
+                                <input type="" class="form-control" id="data_inventario" name="data_inventario">
+                                <div class="invalid-feedback">
+                                    Por favor, selecione a data do inventário.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Planning -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>1. Planejamento do Inventário
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <fieldset>
+                        <!-- Question 1 -->
+                        <div class="question-group">
+                            <label class="question-label">O período de realização do inventário foi definido previamente?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="periodo_definido" id="periodo_sim" value="sim">
+                                    <label class="form-check-label" for="periodo_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="periodo_definido" id="periodo_nao" value="nao">
+                                    <label class="form-check-label" for="periodo_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantity Planning -->
+                        <div class="row quantity-row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="qtd_maquinas" class="form-label">Quantidade de Máquinas Planejadas</label>
+                                    <input type="number" class="form-control" id="qtd_maquinas" name="qtd_maquinas" min="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="qtd_conferentes" class="form-label">Quantidade de Conferentes Planejados</label>
+                                    <input type="number" class="form-control" id="qtd_conferentes" name="qtd_conferentes" min="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="qtd_auxiliares" class="form-label">Quantidade de Auxiliares Planejados</label>
+                                    <input type="number" class="form-control" id="qtd_auxiliares" name="qtd_auxiliares" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-group">
+                            <label class="question-label">A equipe responsável foi designada?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="equipe_designada" id="equipe_sim" value="sim">
+                                    <label class="form-check-label" for="equipe_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="equipe_designada" id="equipe_nao" value="nao">
+                                    <label class="form-check-label" for="equipe_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-group">
+                            <label class="question-label">Os colaboradores receberam treinamento adequado sobre os procedimentos?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="treinamento" id="treinamento_sim" value="sim">
+                                    <label class="form-check-label" for="treinamento_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="treinamento" id="treinamento_nao" value="nao">
+                                    <label class="form-check-label" for="treinamento_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-group">
+                            <label class="question-label">Os objetivos e regras do inventário foram comunicados previamente?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="objetivos_comunicados" id="objetivos_sim" value="sim">
+                                    <label class="form-check-label" for="objetivos_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="objetivos_comunicados" id="objetivos_nao" value="nao">
+                                    <label class="form-check-label" for="objetivos_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Section 2: Environment Organization -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-warehouse me-2"></i>2. Organização do Ambiente
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <fieldset>
+                        <!-- Question 1 -->
+                        <div class="question-group">
+                            <label class="question-label">O estoque está organizado e limpo?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="estoque_organizado" id="estoque_sim" value="sim">
+                                    <label class="form-check-label" for="estoque_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="estoque_organizado" id="estoque_nao" value="nao">
+                                    <label class="form-check-label" for="estoque_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-group">
+                            <label class="question-label">Os produtos estão armazenados em locais corretos e padronizados?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="produtos_padronizados" id="produtos_sim" value="sim">
+                                    <label class="form-check-label" for="produtos_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="produtos_padronizados" id="produtos_nao" value="nao">
+                                    <label class="form-check-label" for="produtos_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-group">
+                            <label class="question-label">Os produtos estão identificados corretamente (código, descrição, lote)?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="produtos_identificados" id="identificados_sim" value="sim">
+                                    <label class="form-check-label" for="identificados_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="produtos_identificados" id="identificados_nao" value="nao">
+                                    <label class="form-check-label" for="identificados_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-group">
+                            <label class="question-label">Os endereços e localizações estão atualizados no sistema?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="enderecos_atualizados" id="enderecos_sim" value="sim">
+                                    <label class="form-check-label" for="enderecos_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="enderecos_atualizados" id="enderecos_nao" value="nao">
+                                    <label class="form-check-label" for="enderecos_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Section 3: Equipment and Materials -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-tools me-2"></i>3. Equipamentos e Materiais
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <fieldset>
+                        <!-- Question 1 -->
+                        <div class="question-group">
+                            <label class="question-label">Os equipamentos de contagem estão funcionando adequadamente?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="equipamentos_funcionando" id="equipamentos_sim" value="sim">
+                                    <label class="form-check-label" for="equipamentos_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="equipamentos_funcionando" id="equipamentos_nao" value="nao">
+                                    <label class="form-check-label" for="equipamentos_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-group">
+                            <label class="question-label">Os materiais de apoio estão disponíveis em quantidade suficiente?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="materiais_suficientes" id="materiais_sim" value="sim">
+                                    <label class="form-check-label" for="materiais_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="materiais_suficientes" id="materiais_nao" value="nao">
+                                    <label class="form-check-label" for="materiais_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-group">
+                            <label class="question-label">As etiquetas e formulários estão disponíveis?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="etiquetas_disponiveis" id="etiquetas_sim" value="sim">
+                                    <label class="form-check-label" for="etiquetas_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="etiquetas_disponiveis" id="etiquetas_nao" value="nao">
+                                    <label class="form-check-label" for="etiquetas_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-group">
+                            <label class="question-label">Há algum problema de conexão de internet no local?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="backup_equipamentos" id="backup_sim" value="sim">
+                                    <label class="form-check-label" for="backup_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="backup_equipamentos" id="backup_nao" value="nao">
+                                    <label class="form-check-label" for="backup_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Section 4: Inventory Execution -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-play me-2"></i>4. Execução do Inventário
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <fieldset>
+                        <!-- Question 1 -->
+                        <div class="question-group">
+                            <label class="question-label">O inventário iniciou no horário estabelecido?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inicio_pontual" id="inicio_sim" value="sim">
+                                    <label class="form-check-label" for="inicio_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inicio_pontual" id="inicio_nao" value="nao">
+                                    <label class="form-check-label" for="inicio_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-group">
+                            <label class="question-label">Os procedimentos de contagem estão sendo seguidos corretamente?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="procedimentos_seguidos" id="procedimentos_sim" value="sim">
+                                    <label class="form-check-label" for="procedimentos_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="procedimentos_seguidos" id="procedimentos_nao" value="nao">
+                                    <label class="form-check-label" for="procedimentos_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-group">
+                            <label class="question-label">As divergências estão sendo registradas adequadamente?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="divergencias_registradas" id="divergencias_sim" value="sim">
+                                    <label class="form-check-label" for="divergencias_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="divergencias_registradas" id="divergencias_nao" value="nao">
+                                    <label class="form-check-label" for="divergencias_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-group">
+                            <label class="question-label">A recontagem está sendo realizada quando necessário?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="recontagem_realizada" id="recontagem_sim" value="sim">
+                                    <label class="form-check-label" for="recontagem_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="recontagem_realizada" id="recontagem_nao" value="nao">
+                                    <label class="form-check-label" for="recontagem_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="question-group">
+                            <label class="question-label">A supervisão está sendo adequada durante todo o processo?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="supervisao_adequada" id="supervisao_sim" value="sim">
+                                    <label class="form-check-label" for="supervisao_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="supervisao_adequada" id="supervisao_nao" value="nao">
+                                    <label class="form-check-label" for="supervisao_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Section 5: Control and Quality -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-check-double me-2"></i>5. Controle e Qualidade
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <fieldset>
+                        <!-- Question 1 -->
+                        <div class="question-group">
+                            <label class="question-label">A dupla contagem está sendo realizada conforme planejado?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="dupla_contagem" id="dupla_sim" value="sim">
+                                    <label class="form-check-label" for="dupla_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="dupla_contagem" id="dupla_nao" value="nao">
+                                    <label class="form-check-label" for="dupla_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-group">
+                            <label class="question-label">A conferência cruzada entre equipes está sendo executada?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="conferencia_cruzada" id="conferencia_sim" value="sim">
+                                    <label class="form-check-label" for="conferencia_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="conferencia_cruzada" id="conferencia_nao" value="nao">
+                                    <label class="form-check-label" for="conferencia_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-group">
+                            <label class="question-label">As divergências identificadas estão sendo investigadas?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="divergencias_investigadas" id="investigadas_sim" value="sim">
+                                    <label class="form-check-label" for="investigadas_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="divergencias_investigadas" id="investigadas_nao" value="nao">
+                                    <label class="form-check-label" for="investigadas_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-group">
+                            <label class="question-label">A documentação do processo (MSO) está sendo realizada?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="documentacao_completa" id="documentacao_sim" value="sim">
+                                    <label class="form-check-label" for="documentacao_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="documentacao_completa" id="documentacao_nao" value="nao">
+                                    <label class="form-check-label" for="documentacao_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Section 6: Completion -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-flag-checkered me-2"></i>6. Finalização
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <fieldset>
+                        <!-- Question 1 -->
+                        <div class="question-group">
+                            <label class="question-label">Os dados foram conferidos e validados antes da finalização?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="dados_conferidos" id="dados_sim" value="sim">
+                                    <label class="form-check-label" for="dados_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="dados_conferidos" id="dados_nao" value="nao">
+                                    <label class="form-check-label" for="dados_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-group">
+                            <label class="question-label">O relatório final foi gerado corretamente?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="relatorio_gerado" id="relatorio_sim" value="sim">
+                                    <label class="form-check-label" for="relatorio_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="relatorio_gerado" id="relatorio_nao" value="nao">
+                                    <label class="form-check-label" for="relatorio_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-group">
+                            <label class="question-label">As divergências foram analisadas e justificadas?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="divergencias_analisadas" id="analisadas_sim" value="sim">
+                                    <label class="form-check-label" for="analisadas_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="divergencias_analisadas" id="analisadas_nao" value="nao">
+                                    <label class="form-check-label" for="analisadas_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-group">
+                            <label class="question-label">As ações corretivas foram definidas e comunicadas?</label>
+                            <div class="radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="acoes_definidas" id="acoes_sim" value="sim">
+                                    <label class="form-check-label" for="acoes_sim">
+                                        <i class="fas fa-check text-success me-1"></i>Sim
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="acoes_definidas" id="acoes_nao" value="nao">
+                                    <label class="form-check-label" for="acoes_nao">
+                                        <i class="fas fa-times text-danger me-1"></i>Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Unified Observations Section -->
+            <div class="card form-section mb-4">
+                <div class="card-header section-header">
+                    <h4 class="section-title mb-0">
+                        <i class="fas fa-comment-alt me-2"></i>Observações Gerais
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="observacoes" class="form-label">Descreva qualquer observação relevante sobre o processo de inventário, divergências encontradas, melhorias sugeridas ou outros pontos importantes:</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="6" 
+                                  placeholder=""></textarea>
+                    </div>
+                </div>
+            </div>        
+
+            <!-- Assinaturas -->
+<div class="card form-section mb-4">
+    <div class="card-header section-header">
+        <h4 class="section-title mb-0">
+            <i class="fas fa-pen-fancy me-2"></i>Assinaturas dos Responsáveis
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="assinatura_gerente" class="form-label">Gerente Logística</label>
+                <input type="text" class="form-control" id="assinatura_gerente" name="assinatura_gerente" placeholder="">
+            </div>
+            <div class="col-md-6">
+                <label for="assinatura_supervisor" class="form-label">Supervisor de Estoque</label>
+                <input type="text" class="form-control" id="assinatura_supervisor" name="assinatura_supervisor" placeholder="">
+            </div>
+            <div class="col-md-6">
+                <label for="assinatura_encarregado" class="form-label">Encarregado de Logística</label>
+                <input type="text" class="form-control" id="assinatura_encarregado" name="assinatura_encarregado" placeholder="">
+            </div>
+            <div class="col-md-6">
+                <label for="assinatura_responsavel" class="form-label">Responsável Operação</label>
+                <input type="text" class="form-control" id="assinatura_responsavel" name="assinatura_responsavel" placeholder="">
+            </div>
+            <div class="col-md-6">
+                <label for="data_maceio" class="form-label">Preencha a data </label>
+                <input type="" class="form-control" id="data_maceio" name="data_maceio">
+            </div>
+        </div>
+    </div>
+</div>
+        </form>
+    </div>
+    <p></p>
+       
+
+    <!-- Footer -->
+    <footer class="footer-section mt-5 no-print">
+        <div class="container">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2025 Solution Logística. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Form validation and interaction handling
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('inventoryForm');
+    
+    // Bootstrap validation
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    }
+    
+    
+    
+    // Form auto-save functionality (optional)
+    const formInputs = form.querySelectorAll('input, textarea, select');
+    formInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // Auto-save to localStorage
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            localStorage.setItem('inventoryForm', JSON.stringify(data));
+        });
+    });
+    
+    // Load saved data on page load
+    loadSavedFormData();
+    
+    // Clear saved data after successful submission
+    form.addEventListener('submit', function() {
+        setTimeout(() => {
+            localStorage.removeItem('inventoryForm');
+        }, 1000);
+    });
+});
+
+// Load saved form data from localStorage
+function loadSavedFormData() {
+    const savedData = localStorage.getItem('inventoryForm');
+    if (savedData) {
+        try {
+            const data = JSON.parse(savedData);
+            Object.keys(data).forEach(key => {
+                const input = document.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'radio') {
+                        const radio = document.querySelector(`[name="${key}"][value="${data[key]}"]`);
+                        if (radio) radio.checked = true;
+                    } else {
+                        input.value = data[key];
+                    }
+                }
+            });
+        } catch (e) {
+            console.error('Error loading saved form data:', e);
+        }
+    }
+}
+
+// Print functionality
+function printForm() {
+    // Hide no-print elements and show form data
+    const noPrintElements = document.querySelectorAll('.no-print');
+    noPrintElements.forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // Add print-specific styling
+    document.body.classList.add('printing');
+    
+    // Trigger print
+    window.print();
+    
+    // Restore elements after print
+    setTimeout(() => {
+        noPrintElements.forEach(el => {
+            el.style.display = '';
+        });
+        document.body.classList.remove('printing');
+    }, 100);
+}
+
+// PDF generation functionality
+function generatePDF() {
+    const form = document.getElementById('inventoryForm');
+    
+    // Check if form is valid
+    if (!form.checkValidity(true)) {
+        form.classList.add('was-validated');
+        alert('Por favor, preencha todos os campos obrigatórios antes de gerar o PDF.');
+        return;
+    }
+    
+    // Show loading state
+    const pdfButton = document.querySelector('button[onclick="generatePDF()"]');
+    const originalText = pdfButton.innerHTML;
+    pdfButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Gerando PDF...';
+    pdfButton.disabled = true;
+    
+    // Create a temporary form for PDF generation
+    const tempForm = document.createElement('form');
+    tempForm.method = 'POST';
+    tempForm.action = '/generate_pdf';
+    tempForm.target = '_blank';
+    tempForm.style.display = 'none';
+    
+    // Copy all form data to temp form
+    const formData = new FormData(form);
+    formData.forEach((value, key) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        tempForm.appendChild(input);
+    });
+    
+    // Submit temp form
+    document.body.appendChild(tempForm);
+    tempForm.submit();
+    document.body.removeChild(tempForm);
+    
+    // Restore button state
+    setTimeout(() => {
+        pdfButton.innerHTML = originalText;
+        pdfButton.disabled = false;
+    }, 2000);
+}
+
+// Form field enhancements
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth transitions to form elements
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+        control.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        control.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    });
+    
+    // Add visual feedback for radio button selections
+    const radioInputs = document.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', function() {
+            const questionGroup = this.closest('.question-group');
+            if (questionGroup) {
+                questionGroup.classList.add('answered');
+                
+                // Add visual indicator based on answer
+                const value = this.value;
+                questionGroup.classList.remove('answer-yes', 'answer-no');
+                questionGroup.classList.add(`answer-${value === 'sim' ? 'yes' : 'no'}`);
+            }
+        });
+    });
+    
+    // Progress tracking
+    updateFormProgress();
+    
+    // Listen for form changes to update progress
+    const form = document.getElementById('inventoryForm');
+    form.addEventListener('change', updateFormProgress);
+});
+
+// Progress tracking function
+function updateFormProgress() {
+    const radioGroups = document.querySelectorAll('input[type="radio"]');
+    const groupNames = new Set();
+    const answeredGroups = new Set();
+    
+    radioGroups.forEach(radio => {
+        groupNames.add(radio.name);
+        if (radio.checked) {
+            answeredGroups.add(radio.name);
+        }
+    });
+    
+    const progress = (answeredGroups.size / groupNames.size) * 100;
+    
+    // Update progress indicator if exists
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar) {
+        progressBar.style.width = `${progress}%`;
+        progressBar.textContent = `${Math.round(progress)}%`;
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl+P for print
+    if (e.ctrlKey && e.key === 'p') {
+        e.preventDefault();
+        printForm();
+    }
+    
+    // Ctrl+S for save (generate PDF)
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        generatePDF();
+    }
+});
+
+// Accessibility enhancements
+document.addEventListener('DOMContentLoaded', function() {
+    // Add ARIA labels for better accessibility
+    const radioGroups = document.querySelectorAll('.question-group');
+    radioGroups.forEach((group, index) => {
+        const label = group.querySelector('.question-label');
+        const radios = group.querySelectorAll('input[type="radio"]');
+        
+        if (label && radios.length > 0) {
+            const groupId = `question-group-${index}`;
+            label.id = `${groupId}-label`;
+            
+            radios.forEach(radio => {
+                radio.setAttribute('aria-labelledby', `${groupId}-label`);
+            });
+        }
+    });
+});
+
+// Form validation enhancements
+function validateForm() {
+    const form = document.getElementById('inventoryForm');
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            isValid = false;
+            field.classList.add('is-invalid');
+        } else {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        }
+    });
+    
+    return isValid;
+}
+
+// Real-time validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('inventoryForm');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.hasAttribute('required')) {
+                if (!this.value.trim()) {
+                    this.classList.add('is-invalid');
+                    this.classList.remove('is-valid');
+                } else {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+    });
+});
+
+    </script>
+
+</body>
+</html>
